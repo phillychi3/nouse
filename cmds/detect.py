@@ -47,6 +47,8 @@ class Event(Cog_Extension):
             return "由於刷頻過多，你現在應該要被kick了，只是有人懶得寫kick"
         if data[str(id)]["delete"] >= 2:
             return "由於異常刪除頻道過多，你現在應該要被kick了，只是有人懶得寫kick"
+        else:
+            return
    
 
     @commands.Cog.listener()
@@ -82,13 +84,15 @@ class Event(Cog_Extension):
                 with open(f'servers\{server}.json', 'w',encoding='unicode_escape') as f:
                     json.dump(data, f, ensure_ascii=False, indent=4)
 
-
+                #偵測行為-1 刷頻
                 if message_time[len(message_time)-1]-message_time[len(message_time)-2]<0.5 and message_id[len(message_id)-1]==message_id[len(message_id)-2]!=862884526903263232 :
                     await msg.channel.set_permissions(msg.guild.default_role, send_messages=False)
                     uuid4=uuid.uuid4()
-                    await msg.channel.send(f"警告 刷頻行為禁止 ID:`{uuid4}`")
+                    await msg.channel.send(f"發現威脅 威脅等級:0 刷頻行為禁止 ID:`{uuid4}`")
                     self.addban(message_id[len(message_id)-1],"nouse")
-                    self.ban(message_id[len(message_id)-1])
+                    banmsg=self.ban(message_id[len(message_id)-1])
+                    if banmsg!=None:
+                        await msg.channel.send(banmsg)
                     await asyncio.sleep(3)
                     await msg.channel.set_permissions(msg.guild.default_role, send_messages=True)   
 
@@ -106,7 +110,7 @@ class Event(Cog_Extension):
                             reidbool=False
 
                     for i in retext:
-
+                        #偵測行為-2 重複訊息
                         if retext[i]>=4 and data["server"]["status"]!="doing" and reidbool==True:
 
                             with open(f'servers\{server}.json', 'r', encoding='unicode_escape') as jfile:
@@ -139,6 +143,10 @@ class Event(Cog_Extension):
                             print(f"-- {i}--{retext[i]}")
                             uuid4=uuid.uuid4()
                             await msg.channel.send(f"發現威脅 威脅等級:1 ID:`{uuid4}`")
+                            self.addban(message_id[len(message_id)-1],"swipe")
+                            banmsg=self.ban(message_id[len(message_id)-1])
+                            if banmsg!=None:
+                                await msg.channel.send(banmsg)
                             with open(f'servers\{server}.json', 'r', encoding='unicode_escape') as jfile:
                                 data = json.load(jfile)
                             data["server"]["message_text"]=[]

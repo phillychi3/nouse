@@ -1,7 +1,11 @@
+import asyncio
+import json
+import os
+
 import discord
-from discord.ext import commands
 from core.classes import Cog_Extension
-import json, asyncio, os
+from discord.ext import commands
+
 
 class Owner(Cog_Extension):
 	@commands.command()

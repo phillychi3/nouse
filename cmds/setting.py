@@ -1,9 +1,12 @@
-import discord
-from discord.ext import commands
-import os
 import json
+import os
+
+import discord
 import numpy as np
 import requests
+from discord.ext import commands
+
+
 class Live(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
